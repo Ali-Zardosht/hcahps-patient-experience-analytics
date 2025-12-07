@@ -1,3 +1,9 @@
+# HCAHPS Patient Experience Analytics
+### SQL • ETL • Tableau • Healthcare Data Insights
+
+Analyzing U.S. hospital performance using HCAHPS patient experience data.
+Includes data cleaning, ETL workflows, data modeling, and Tableau dashboards.
+
 **HCAHPS Patient Experience Analytics**
 
 Understanding patient satisfaction patterns through SQL-based ETL and Tableau data visualization
