@@ -1,0 +1,198 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2865
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww30040\viewh18980\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf0 \expnd0\expndtw0\kerning0
+###Database creation###\
+CREATE DATABASE hcahps_dw;\
+\
+USE hcahps_dw;\
+\
+CREATE TABLE Facility (\
+    FacilityID VARCHAR(20) PRIMARY KEY, FacilityName VARCHAR(255), Address VARCHAR(255), CityTown VARCHAR(100),\
+    State CHAR(2), ZIPCode VARCHAR(10), CountyParish VARCHAR(100), TelephoneNumber VARCHAR(20));\
+    \
+CREATE TABLE Measure (\
+    MeasureID VARCHAR(50) PRIMARY KEY, Question TEXT, AnswerDescription VARCHAR(255));\
+    \
+CREATE TABLE DatePeriod (\
+    DateID INT AUTO_INCREMENT PRIMARY KEY, StartDate DATE, EndDate DATE);\
+    \
+CREATE TABLE Result (\
+    ResultID INT AUTO_INCREMENT PRIMARY KEY,\
+    FacilityID VARCHAR(20),\
+    MeasureID VARCHAR(50),\
+    DateID INT,\
+\
+    StarRating VARCHAR(10), AnswerPercent VARCHAR(10), LinearMeanValue VARCHAR(10), CompletedSurveys VARCHAR(10), ResponseRatePercent VARCHAR(10),\
+\
+    StarRatingFootnote VARCHAR(100), AnswerPercentFootnote VARCHAR(100), CompletedSurveysFootnote VARCHAR(100), ResponseRatePercentFootnote VARCHAR(100),\
+\
+    FOREIGN KEY (FacilityID) REFERENCES Facility(FacilityID),\
+    FOREIGN KEY (MeasureID) REFERENCES Measure(MeasureID),\
+    FOREIGN KEY (DateID) REFERENCES DatePeriod(DateID));\
+\
+###Extract ###\
+CREATE TABLE stg_hcahps_raw (\
+  FacilityID VARCHAR(20), FacilityName VARCHAR(255), Address VARCHAR(255), CityTown VARCHAR(120), State VARCHAR(10), ZIPCode VARCHAR(20),\
+  CountyParish VARCHAR(120), TelephoneNumber VARCHAR(25),\
+  \
+  HCAHPSMeasureID VARCHAR(80), HCAHPSQuestion TEXT, HCAHPSAnswerDescription VARCHAR(255),\
+  \
+  PatientSurveyStarRating VARCHAR(32), PatientSurveyStarRatingFootnote VARCHAR(64), HCAHPSAnswerPercent VARCHAR(32),\
+  HCAHPSAnswerPercentFootnote VARCHAR(64), HCAHPSLinearMeanValue VARCHAR(32), NumberOfCompletedSurveys VARCHAR(32),\
+  NumberOfCompletedSurveysFootnote VARCHAR(64), SurveyResponseRatePercent VARCHAR(32), SurveyResponseRatePercentFootnote VARCHAR(64),\
+\
+  StartDate VARCHAR(32), EndDate VARCHAR(32));\
+\
+CREATE OR REPLACE VIEW x_facility_source AS\
+SELECT DISTINCT\
+  TRIM(FacilityID) AS FacilityID, TRIM(FacilityName) AS FacilityName, TRIM(Address) AS Address, TRIM(CityTown) AS CityTown,\
+  TRIM(State) AS State, TRIM(ZIPCode) AS ZIPCode, TRIM(CountyParish) AS CountyParish, TRIM(TelephoneNumber) AS TelephoneNumber\
+FROM stg_hcahps_raw WHERE FacilityID IS NOT NULL AND FacilityID <> '';\
+\
+CREATE OR REPLACE VIEW x_measure_source AS\
+SELECT DISTINCT\
+  TRIM(HCAHPSMeasureID) AS MeasureID, TRIM(HCAHPSQuestion) AS Question, TRIM(HCAHPSAnswerDescription) AS AnswerDescription\
+FROM stg_hcahps_raw WHERE HCAHPSMeasureID IS NOT NULL AND HCAHPSMeasureID <> '';\
+\
+CREATE OR REPLACE VIEW x_period_source AS\
+SELECT DISTINCT TRIM(StartDate) AS StartDate, TRIM(EndDate) AS EndDate\
+FROM stg_hcahps_raw WHERE StartDate IS NOT NULL AND EndDate IS NOT NULL;\
+\
+CREATE OR REPLACE VIEW x_result_source AS\
+SELECT\
+  TRIM(FacilityID) AS FacilityID, TRIM(HCAHPSMeasureID) AS MeasureID, TRIM(HCAHPSAnswerDescription) AS AnswerDescription,\
+  TRIM(StartDate) AS StartDate, TRIM(EndDate) AS EndDate,\
+  \
+  TRIM(PatientSurveyStarRating) AS StarRating, TRIM(HCAHPSAnswerPercent) AS AnswerPercent, TRIM(HCAHPSLinearMeanValue) AS LinearMeanValue,\
+  TRIM(NumberOfCompletedSurveys) AS CompletedSurveys, TRIM(SurveyResponseRatePercent) AS ResponseRatePercent,\
+\
+  TRIM(PatientSurveyStarRatingFootnote) AS StarRatingFootnote, TRIM(HCAHPSAnswerPercentFootnote) AS AnswerPercentFootnote,\
+  TRIM(NumberOfCompletedSurveysFootnote) AS CompletedSurveysFootnote, TRIM(SurveyResponseRatePercentFootnote) AS ResponseRatePercentFootnote\
+FROM stg_hcahps_raw;\
+\
+###Transform###\
+CREATE OR REPLACE VIEW v_result_clean AS\
+SELECT\
+  FacilityID, MeasureID, AnswerDescription, StartDate, EndDate,\
+\
+  -- Transform Star Rating\
+  CASE\
+    WHEN StarRating REGEXP '^[0-9]+(\\\\.[0-9]+)?$'\
+      THEN CAST(StarRating AS DECIMAL(4,2))\
+    ELSE NULL\
+  END AS StarRating,\
+\
+  -- Transform Answer Percent\
+  CASE\
+    WHEN AnswerPercent REGEXP '^[0-9]+(\\\\.[0-9]+)?$'\
+      THEN CAST(AnswerPercent AS DECIMAL(5,2))\
+    ELSE NULL\
+  END AS AnswerPercent,\
+\
+  -- Transform Linear Mean Value\
+  CASE\
+    WHEN LinearMeanValue REGEXP '^[0-9]+(\\\\.[0-9]+)?$'\
+      THEN CAST(LinearMeanValue AS DECIMAL(6,3))\
+    ELSE NULL\
+  END AS LinearMeanValue,\
+\
+  -- Transform Completed Surveys\
+  CASE\
+    WHEN CompletedSurveys REGEXP '^[0-9]+$'\
+      THEN CAST(CompletedSurveys AS SIGNED)\
+    ELSE NULL\
+  END AS CompletedSurveys,\
+\
+  -- Transform Survey Response Rate Percent\
+  CASE\
+    WHEN ResponseRatePercent REGEXP '^[0-9]+(\\\\.[0-9]+)?$'\
+      THEN CAST(ResponseRatePercent AS DECIMAL(5,2))\
+    ELSE NULL\
+  END AS ResponseRatePercent,\
+\
+  StarRatingFootnote,\
+  AnswerPercentFootnote,\
+  CompletedSurveysFootnote,\
+  ResponseRatePercentFootnote\
+\
+FROM x_result_source;\
+\
+###Load###\
+-- Load unique hospitals into the dimension table\
+INSERT IGNORE INTO Facility\
+  (FacilityID, FacilityName, Address, CityTown, State, ZIPCode, CountyParish, TelephoneNumber)\
+SELECT\
+  FacilityID, FacilityName, Address, CityTown, State, ZIPCode, CountyParish, TelephoneNumber\
+FROM x_facility_source;\
+\
+-- Insert unique measures (question + answer) into the dimension\
+INSERT IGNORE INTO Measure (MeasureID, Question, AnswerDescription)\
+SELECT MeasureID, Question, AnswerDescription\
+FROM x_measure_source;\
+\
+-- Load the reporting period into DatePeriod (once)\
+INSERT IGNORE INTO DatePeriod (StartDate, EndDate)\
+SELECT\
+  STR_TO_DATE(StartDate, '%m/%d/%Y'),\
+  STR_TO_DATE(EndDate,   '%m/%d/%Y')\
+FROM x_period_source;\
+\
+-- Load facts (numbers will be stored as text in your current schema)\
+INSERT INTO Result (\
+  FacilityID, MeasureID, DateID,\
+  StarRating, AnswerPercent, LinearMeanValue, CompletedSurveys, ResponseRatePercent,\
+  StarRatingFootnote, AnswerPercentFootnote, CompletedSurveysFootnote, ResponseRatePercentFootnote\
+)\
+SELECT\
+  v.FacilityID,\
+  v.MeasureID,\
+  d.DateID,\
+\
+  CASE WHEN v.StarRating IS NULL THEN NULL ELSE CAST(v.StarRating AS CHAR) END,\
+  CASE WHEN v.AnswerPercent IS NULL THEN NULL ELSE CAST(v.AnswerPercent AS CHAR) END,\
+  CASE WHEN v.LinearMeanValue IS NULL THEN NULL ELSE CAST(v.LinearMeanValue AS CHAR) END,\
+  CASE WHEN v.CompletedSurveys IS NULL THEN NULL ELSE CAST(v.CompletedSurveys AS CHAR) END,\
+  CASE WHEN v.ResponseRatePercent IS NULL THEN NULL ELSE CAST(v.ResponseRatePercent AS CHAR) END,\
+\
+  v.StarRatingFootnote,\
+  v.AnswerPercentFootnote,\
+  v.CompletedSurveysFootnote,\
+  v.ResponseRatePercentFootnote\
+FROM v_result_clean v\
+JOIN DatePeriod d\
+  ON d.StartDate = STR_TO_DATE(v.StartDate, '%m/%d/%Y')\
+ AND d.EndDate   = STR_TO_DATE(v.EndDate,   '%m/%d/%Y');\
+\
+###Download the CSV for Tableau Analysis \
+\
+SELECT \
+    r.FacilityID,\
+    f.FacilityName,\
+    f.CityTown,\
+    f.State,\
+    f.CountyParish,\
+    \
+    r.MeasureID,\
+    m.Question,\
+    m.AnswerDescription,\
+    \
+    r.StarRating,\
+    r.AnswerPercent,\
+    r.LinearMeanValue,\
+    r.CompletedSurveys,\
+    r.ResponseRatePercent,\
+    \
+    d.StartDate,\
+    d.EndDate\
+FROM Result r\
+JOIN Facility f   ON r.FacilityID = f.FacilityID\
+JOIN Measure m    ON r.MeasureID  = m.MeasureID\
+JOIN DatePeriod d ON r.DateID     = d.DateID;\
+\
+}
