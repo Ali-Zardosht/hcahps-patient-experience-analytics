@@ -1,7 +1,9 @@
 **HCAHPS Patient Experience Analytics**
+
 Understanding patient satisfaction patterns through SQL-based ETL and Tableau data visualization
 
 **Project Overview**
+
 This project analyzes patient experience and satisfaction across U.S. hospitals using HCAHPS (Hospital Consumer Assessment of Healthcare Providers and Systems) survey data.
 
 It follows a complete data engineering + analytics workflow, including:
@@ -23,12 +25,14 @@ This project helps hospitals, administrators, and researchers understand:
  How survey volume and response rates influence ratings
 
 **Tools & Technologies**
+
 MySQL: MySQL Workbench	ETL, cleaning, transformation, schema building
 Tableau: Visualization & exploratory analytics
 Excel: CSV processing, Pre-processing & validation
 GitHub: Project documentation & version control
 
 **Project Structure**
+
 hcahps-patient-experience-analytics/
 │
 ├── images/                       # Key project visualizations
@@ -86,6 +90,7 @@ A positive moderate correlation exists:
 Higher-rated hospitals tend to have better patient engagement and survey response rates — a meaningful behavioral signal.
 
 **ETL & Data Preparation Summary (SQL Workflow)**
+
 ✔ Created relational schema
 Tables:
 Facility
@@ -110,6 +115,7 @@ Validated measures per hospital & date period
 This clean pipeline ensured accurate visualization and statistical reliability.
 
 **What I Learned**
+
 Designing healthcare ETL workflows and relational schemas
 Cleaning messy CMS and HCAHPS datasets using SQL
 Building meaningful data visualizations in Tableau
@@ -117,6 +123,7 @@ Translating analytics into healthcare quality insights
 Communicating complex metrics to non-technical audiences
 
 **Contact**
+
 If you'd like to discuss healthcare analytics, patient experience measurement, or data warehousing:
 
 📧 ali.zardosht2025@yahoo.com
