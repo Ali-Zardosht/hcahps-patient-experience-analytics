@@ -34,7 +34,7 @@ GitHub: Project documentation & version control
 **Project Structure**
 
 hcahps-patient-experience-analytics/
-│
+
 ├── images/                       # Key project visualizations
 │   ├── q1_avg_star_by_state.png
 │   ├── q2_response_rates_hospitals.png
