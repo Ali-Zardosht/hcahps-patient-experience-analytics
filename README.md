@@ -4,10 +4,6 @@
 Analyzing U.S. hospital performance using HCAHPS patient experience data.
 Includes data cleaning, ETL workflows, data modeling, and Tableau dashboards.
 
-**HCAHPS Patient Experience Analytics**
-
-Understanding patient satisfaction patterns through SQL-based ETL and Tableau data visualization
-
 **Project Overview**
 
 This project analyzes patient experience and satisfaction across U.S. hospitals using HCAHPS (Hospital Consumer Assessment of Healthcare Providers and Systems) survey data.
