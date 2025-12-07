@@ -25,7 +25,7 @@ This project helps hospitals, administrators, and researchers understand:
 **Tools & Technologies**
 MySQL: MySQL Workbench	ETL, cleaning, transformation, schema building
 Tableau: Visualization & exploratory analytics
-Excel: CSV processing	, Pre-processing & validation
+Excel: CSV processing, Pre-processing & validation
 GitHub: Project documentation & version control
 
 **Project Structure**
@@ -39,15 +39,16 @@ hcahps-patient-experience-analytics/
 │   ├── q4_states_high_satisfaction_map.png
 │   ├── q5_completed_vs_response_scatter.png
 │   ├── q6_star_vs_response_scatter.png
-│
+
 ├── sql/                          # ETL + cleaning SQL files
 │   ├── create_schema.sql
 │   ├── cleaning_transformations.sql
 │   ├── loaded_tables_preview.sql
-│
+
 └── README.md                     # Project documentation
 
 **Key Visual Insights**
+
 1️⃣ Average Patient Survey Star Rating by State
 Which states have the highest patient satisfaction?
 Insight:
