@@ -1,8 +1,8 @@
 # HCAHPS Patient Experience Analytics
-### SQL • ETL • Tableau • Healthcare Data Insights
+### SQL • Tableau • Healthcare Data Insights
 
 Analyzing U.S. hospital performance using HCAHPS patient experience data.
-Includes data cleaning, ETL workflows, data modeling, and Tableau dashboards.
+Includes data cleaning, data modeling, and Tableau dashboards.
 
 **Project Overview**
 
@@ -10,7 +10,7 @@ This project analyzes patient experience and satisfaction across U.S. hospitals 
 
 It follows a complete data engineering + analytics workflow, including:
 
-SQL-based ETL & cleaning (MySQL)
+Cleaning (MySQL)
 
 Schema design & diagramming
 
@@ -28,7 +28,7 @@ This project helps hospitals, administrators, and researchers understand:
 
 **Tools & Technologies**
 
-MySQL: MySQL Workbench	ETL, cleaning, transformation, schema building
+MySQL: MySQL Workbench, cleaning, transformation, schema building
 Tableau: Visualization & exploratory analytics
 Excel: CSV processing, Pre-processing & validation
 GitHub: Project documentation & version control
