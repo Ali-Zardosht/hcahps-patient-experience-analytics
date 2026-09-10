@@ -91,7 +91,7 @@ Insight:
 A positive moderate correlation exists:
 Higher-rated hospitals tend to have better patient engagement and survey response rates — a meaningful behavioral signal.
 
-**ETL & Data Preparation Summary (SQL Workflow)**
+**Data Preparation Summary (SQL Workflow)**
 
 ✔ Created relational schema
 Tables:
@@ -118,7 +118,7 @@ This clean pipeline ensured accurate visualization and statistical reliability.
 
 **What I Learned**
 
-Designing healthcare ETL workflows and relational schemas
+Relational schemas
 Cleaning messy CMS and HCAHPS datasets using SQL
 Building meaningful data visualizations in Tableau
 Translating analytics into healthcare quality insights
