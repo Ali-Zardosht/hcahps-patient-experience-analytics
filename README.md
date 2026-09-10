@@ -107,7 +107,7 @@ Fixed missing or ambiguous Measure IDs
 Converted percentages to numeric
 Removed duplicate facility records
 Aligned Measure–Result foreign keys
-Created StarRating_Num (numeric rating)
+Created StarRating_Num (numeric rating),
 Created calculated Linear Mean Value for Tableau
 
 ✔ Transformation for Tableau
